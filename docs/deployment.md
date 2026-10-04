@@ -31,7 +31,7 @@ Cloudflare currently recommends `wrangler.jsonc` for new projects. The checked-i
 
 ## 2. Configure the two origins
 
-Edit `frontend/config.js` so it contains the deployed Worker URL without a trailing slash:
+For a shared default, edit `frontend/config.js` so it contains the deployed Worker URL without a trailing slash. Otherwise leave it blank and each tester can enter the URL in the page's Test Endpoint field; the choice is stored only in that browser:
 
 ```js
 window.APP_CONFIG = Object.freeze({
@@ -92,4 +92,3 @@ If Fetch, SSE, and streaming all fail immediately, first check `API_BASE_URL` an
 ## Optional non-interactive Cloudflare automation
 
 For CI, use a narrowly scoped Cloudflare API token stored in the CI secret store and exposed to Wrangler as `CLOUDFLARE_API_TOKEN`. Never put it in `wrangler.jsonc` or commit it. Interactive local deployment should use `npx wrangler login`.
-

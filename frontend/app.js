@@ -6,6 +6,7 @@ const TEST_NAMES = {
   stream: "HTTP Streaming",
   websocket: "WebSocket"
 };
+const ENDPOINT_STORAGE_KEY = "remote-capability-test.api-base-url";
 
 const state = Object.fromEntries(Object.keys(TEST_NAMES).map((key) => [key, {
   status: "NOT TESTED",
@@ -15,13 +16,100 @@ const state = Object.fromEntries(Object.keys(TEST_NAMES).map((key) => [key, {
 
 let runningAll = false;
 let lastTestTime = null;
+let configuredBaseUrl = "";
+
+function normaliseApiBase(value) {
+  const url = new URL(String(value || "").trim());
+  if (!/^https?:$/.test(url.protocol) || url.username || url.password || url.search || url.hash) {
+    throw new Error("Enter an HTTP or HTTPS Worker URL without credentials, a query, or a fragment");
+  }
+  return url.toString().replace(/\/$/, "");
+}
+
+function updateEndpointStatus(message) {
+  document.getElementById("endpoint-status").textContent = message;
+}
+
+function readSavedEndpoint() {
+  try { return localStorage.getItem(ENDPOINT_STORAGE_KEY); }
+  catch { return null; }
+}
+
+function saveEndpoint(value) {
+  try {
+    localStorage.setItem(ENDPOINT_STORAGE_KEY, value);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function clearSavedEndpoint() {
+  try { localStorage.removeItem(ENDPOINT_STORAGE_KEY); }
+  catch { /* the in-page value is already cleared */ }
+}
+
+function resetAllTests() {
+  for (const key of Object.keys(TEST_NAMES)) {
+    state[key] = { status: "NOT TESTED", fields: {}, reason: "" };
+    const card = document.querySelector(`[data-test="${key}"]`);
+    card.dataset.state = "not-tested";
+    const statusNode = card.querySelector("[data-status]");
+    statusNode.textContent = "NOT TESTED";
+    statusNode.className = "status status-not-tested";
+    card.querySelectorAll("[data-field]").forEach((node) => {
+      node.textContent = node.dataset.field === "error" ? "None" : "—";
+    });
+  }
+  lastTestTime = null;
+  document.getElementById("test-time").textContent = "No test run yet";
+  renderSummary();
+}
+
+function applyEndpoint(event) {
+  event.preventDefault();
+  if (runningAll || Object.values(state).some((item) => item.status === "TESTING")) return;
+  const input = document.getElementById("api-base-url");
+  const rawValue = input.value.trim();
+  if (!rawValue) {
+    configuredBaseUrl = "";
+    clearSavedEndpoint();
+    resetAllTests();
+    updateEndpointStatus("No endpoint configured. You can review the page now and add one when a Worker is available.");
+    return;
+  }
+  try {
+    configuredBaseUrl = normaliseApiBase(rawValue);
+    input.value = configuredBaseUrl;
+    resetAllTests();
+    updateEndpointStatus(saveEndpoint(configuredBaseUrl)
+      ? "Endpoint applied on this browser. Run a test when you are ready."
+      : "Endpoint applied for this page session. Browser storage is unavailable.");
+  } catch (error) {
+    updateEndpointStatus(error.message);
+    input.focus();
+  }
+}
+
+function initialiseEndpoint() {
+  const input = document.getElementById("api-base-url");
+  const saved = readSavedEndpoint();
+  const candidate = saved || window.APP_CONFIG?.API_BASE_URL || "";
+  if (!candidate) return;
+  try {
+    configuredBaseUrl = normaliseApiBase(candidate);
+    input.value = configuredBaseUrl;
+    updateEndpointStatus("Endpoint loaded from this browser. Run a test when you are ready.");
+  } catch {
+    clearSavedEndpoint();
+  }
+}
 
 function apiBase() {
-  const configured = window.APP_CONFIG?.API_BASE_URL;
-  if (!configured || typeof configured !== "string") {
-    throw new Error("API_BASE_URL is not configured");
+  if (!configuredBaseUrl) {
+    throw new Error("Test endpoint URL is not configured");
   }
-  return configured.replace(/\/$/, "");
+  return configuredBaseUrl;
 }
 
 function endpoint(path) {
@@ -416,7 +504,8 @@ async function copyResults() {
 document.querySelectorAll("[data-run]").forEach((button) => {
   button.addEventListener("click", () => runOne(button.dataset.run));
 });
+document.getElementById("endpoint-form").addEventListener("submit", applyEndpoint);
 document.getElementById("run-all").addEventListener("click", runAll);
 document.getElementById("copy-results").addEventListener("click", copyResults);
+initialiseEndpoint();
 renderSummary();
-

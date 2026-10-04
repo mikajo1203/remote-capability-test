@@ -25,6 +25,21 @@
         </div>
       </header>
 
+      <section class="endpoint-config" aria-labelledby="endpoint-title">
+        <div class="section-heading">
+          <h2 id="endpoint-title">Test Endpoint</h2>
+          <span>Saved only in this browser</span>
+        </div>
+        <form id="endpoint-form" class="endpoint-form">
+          <label for="api-base-url">Cloudflare Worker URL</label>
+          <div class="endpoint-controls">
+            <input id="api-base-url" name="api-base-url" type="url" inputmode="url" autocomplete="url" placeholder="https://your-worker.workers.dev">
+            <button type="submit">Apply endpoint</button>
+          </div>
+        </form>
+        <p id="endpoint-status" class="endpoint-status" role="status" aria-live="polite">No endpoint configured. You can review the page now and add one when a Worker is available.</p>
+      </section>
+
       <section class="environment" aria-labelledby="environment-title">
         <div class="section-heading">
           <h2 id="environment-title">Environment</h2>
@@ -125,4 +140,3 @@
     <noscript><p class="noscript">JavaScript is disabled. This test requires JavaScript.</p></noscript>
   </body>
 </html>
-

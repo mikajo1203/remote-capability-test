@@ -18,7 +18,7 @@ Static HTML / CSS / JavaScript
       Cloudflare Worker
 ```
 
-The frontend is intentionally buildless. This removes framework, package CDN, bundler, and runtime dependencies that could otherwise be mistaken for network failures. `frontend/config.js` is the single source for the Worker base URL.
+The frontend is intentionally buildless. This removes framework, package CDN, bundler, and runtime dependencies that could otherwise be mistaken for network failures. The page starts without a required backend and accepts a Worker base URL in its Test Endpoint field. That value is stored only in the current browser; `frontend/config.js` can optionally provide a default.
 
 The Worker uses ES modules and remains stateless. WebSocket echo uses Cloudflare's `WebSocketPair`, which is sufficient for a single client connection and needs neither Durable Objects nor persistent storage.
 
@@ -49,4 +49,3 @@ Requests without an `Origin` header remain usable for direct operational checks 
 ## Data handling
 
 All counters and timing measurements remain in browser memory. Copy Results creates a local plain-text summary and deliberately omits URLs, IP addresses, headers, cookies, user/account details, and environment information. The Worker does not log application data or use storage.
-

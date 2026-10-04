@@ -40,7 +40,7 @@ Requirements: a current Node.js release and npm.
    python3 -m http.server 8000 --directory frontend
    ```
 
-3. Open `http://localhost:8000`. The committed local defaults match: `frontend/config.js` points to `http://localhost:8787`, and `worker/wrangler.jsonc` allows `http://localhost:8000`.
+3. Open `http://localhost:8000`, enter `http://localhost:8787` in **Test Endpoint**, and choose **Apply endpoint**. The endpoint is saved only in that browser.
 
 4. Run the Worker tests:
 
@@ -54,7 +54,7 @@ Do not open `frontend/index.html` directly with a `file:` URL; use a local HTTP 
 ## Deployment overview
 
 1. Deploy the Cloudflare Worker with Wrangler.
-2. Put the resulting HTTPS Worker URL in `frontend/config.js`.
+2. Put the resulting HTTPS Worker URL into the deployed page's **Test Endpoint** field, or set it as the optional default in `frontend/config.js`.
 3. Set `ALLOWED_ORIGIN` in `worker/wrangler.jsonc` to the exact GitHub Pages origin (scheme and host, with no repository path or trailing slash), then deploy the Worker again.
 4. In the GitHub repository, select **Settings → Pages → Source: GitHub Actions**.
 5. Push the frontend configuration to `main`; `.github/workflows/deploy-pages.yml` publishes `frontend/`.
@@ -75,4 +75,3 @@ The Worker is stateless and exposes only four fixed routes. Production CORS is r
 - WebSocket: 30-second survival test; 38-second timeout
 
 A complete sequential run normally takes about 46 seconds.
-
