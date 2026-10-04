@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Test standard browser support for HTTPS, SSE, HTTP streaming, and WebSocket.">
+    <meta name="color-scheme" content="dark">
+    <title>Remote Capability Test</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b1220'/%3E%3Cpath d='M13 33h10l5-14 9 28 5-14h9' fill='none' stroke='%2348d5b5' stroke-width='5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+    <link rel="stylesheet" href="style.css">
+    <script src="config.js"></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <main class="shell">
+      <header class="page-header">
+        <div>
+          <p class="eyebrow">Browser diagnostics</p>
+          <h1>Remote Capability Test</h1>
+          <p class="intro">Check whether this browser can use standard web protocols against the configured test endpoint.</p>
+        </div>
+        <div class="overall" aria-live="polite">
+          <span class="overall-label">Overall</span>
+          <strong id="overall-status" class="status status-not-tested">NOT TESTED</strong>
+        </div>
+      </header>
+
+      <section class="environment" aria-labelledby="environment-title">
+        <div class="section-heading">
+          <h2 id="environment-title">Environment</h2>
+          <span>Local browser checks</span>
+        </div>
+        <div class="environment-grid">
+          <div class="environment-row"><span>Page Load</span><strong class="status status-pass">PASS</strong></div>
+          <div class="environment-row"><span>JavaScript</span><strong class="status status-pass" id="javascript-status">PASS</strong></div>
+        </div>
+      </section>
+
+      <section aria-labelledby="http-title">
+        <div class="section-heading">
+          <h2 id="http-title">HTTP</h2>
+          <span>Request and response capabilities</span>
+        </div>
+        <div class="card-grid">
+          <article class="test-card" data-test="fetch">
+            <div class="card-top">
+              <div><p class="protocol">GET /api/ping</p><h3>HTTPS Fetch</h3></div>
+              <strong class="status status-not-tested" data-status>NOT TESTED</strong>
+            </div>
+            <dl class="metrics" data-metrics>
+              <div><dt>Latency</dt><dd data-field="latency">—</dd></div>
+              <div><dt>HTTP Status</dt><dd data-field="httpStatus">—</dd></div>
+              <div><dt>Response Time</dt><dd data-field="responseTime">—</dd></div>
+              <div class="wide"><dt>Last Error</dt><dd data-field="error">None</dd></div>
+            </dl>
+            <button type="button" data-run="fetch">Run test</button>
+          </article>
+
+          <article class="test-card" data-test="sse">
+            <div class="card-top">
+              <div><p class="protocol">EVENTS /api/sse</p><h3>Server-Sent Events</h3></div>
+              <strong class="status status-not-tested" data-status>NOT TESTED</strong>
+            </div>
+            <dl class="metrics" data-metrics>
+              <div><dt>Messages Received</dt><dd data-field="messages">—</dd></div>
+              <div><dt>Connection Duration</dt><dd data-field="duration">—</dd></div>
+              <div><dt>Last Event Time</dt><dd data-field="lastEvent">—</dd></div>
+              <div class="wide"><dt>Last Error</dt><dd data-field="error">None</dd></div>
+            </dl>
+            <button type="button" data-run="sse">Run test</button>
+          </article>
+
+          <article class="test-card" data-test="stream">
+            <div class="card-top">
+              <div><p class="protocol">STREAM /api/stream</p><h3>HTTP Streaming</h3></div>
+              <strong class="status status-not-tested" data-status>NOT TESTED</strong>
+            </div>
+            <dl class="metrics" data-metrics>
+              <div><dt>Chunks Received</dt><dd data-field="chunks">—</dd></div>
+              <div><dt>First Chunk Delay</dt><dd data-field="firstDelay">—</dd></div>
+              <div><dt>Total Duration</dt><dd data-field="duration">—</dd></div>
+              <div class="wide"><dt>Last Error</dt><dd data-field="error">None</dd></div>
+            </dl>
+            <button type="button" data-run="stream">Run test</button>
+          </article>
+        </div>
+      </section>
+
+      <section aria-labelledby="realtime-title">
+        <div class="section-heading">
+          <h2 id="realtime-title">Realtime</h2>
+          <span>30-second connection survival</span>
+        </div>
+        <article class="test-card websocket-card" data-test="websocket">
+          <div class="card-top">
+            <div><p class="protocol">UPGRADE /ws</p><h3>WebSocket Echo</h3></div>
+            <strong class="status status-not-tested" data-status>NOT TESTED</strong>
+          </div>
+          <dl class="metrics metrics-wide" data-metrics>
+            <div><dt>Messages Sent</dt><dd data-field="sent">—</dd></div>
+            <div><dt>Messages Received</dt><dd data-field="received">—</dd></div>
+            <div><dt>Average RTT</dt><dd data-field="averageRtt">—</dd></div>
+            <div><dt>Connection Duration</dt><dd data-field="duration">—</dd></div>
+            <div><dt>Close Code</dt><dd data-field="closeCode">—</dd></div>
+            <div><dt>Close Reason</dt><dd data-field="closeReason">—</dd></div>
+            <div class="wide"><dt>Last Error</dt><dd data-field="error">None</dd></div>
+          </dl>
+          <button type="button" data-run="websocket">Run test</button>
+        </article>
+      </section>
+
+      <section class="summary" aria-labelledby="summary-title">
+        <div class="section-heading">
+          <h2 id="summary-title">Summary</h2>
+          <span id="test-time">No test run yet</span>
+        </div>
+        <div class="summary-grid" id="summary-grid"></div>
+        <div class="actions">
+          <button class="primary" type="button" id="run-all">Run all tests</button>
+          <button type="button" id="copy-results">Copy results</button>
+          <span id="copy-feedback" role="status" aria-live="polite"></span>
+        </div>
+      </section>
+    </main>
+    <noscript><p class="noscript">JavaScript is disabled. This test requires JavaScript.</p></noscript>
+  </body>
+</html>
+
